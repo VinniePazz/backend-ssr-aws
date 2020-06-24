@@ -2,13 +2,14 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 require('dotenv').config();
 
-const app = express();
+const connectMongo = require('./database');
 
 // import routes
 const authRoutes = require('./routes/auth');
+
+const app = express();
 
 // app middlewares
 app.use(morgan('dev'));
@@ -16,15 +17,26 @@ app.use(bodyParser.json());
 
 // app.use(cors()); // allows all origins
 if (process.env.NODE_ENV === 'development') {
-  app.use(cors({ origin: `${process.env.CLIENT_URL}` }));
+  app.use(cors({ origin: `${process.env.PUBLIC_URL}` }));
 }
 
 // middleware
 app.use('/api', authRoutes);
 
-// port
-const port = process.env.PORT || 8000;
+// mount server
+const startServer = async () => {
+  const port = process.env.PORT || 8000;
 
-app.listen(port, () => {
-  console.log(`app is running on port ${port}`);
-});
+  try {
+    await connectMongo();
+    console.log('connected to MongoDB Cluster');
+  } catch (err) {
+    console.error(err);
+  }
+
+  app.listen(port, () => {
+    console.log(`app is running on port ${port}`);
+  });
+};
+
+startServer();
