@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 const connectMongo = require('./database');
 
-const authRoutes = require('./routes/auth');
+const signupRouter = require('./routes/signup');
 
 const app = express();
 
@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // routes
-app.use('/api', authRoutes);
+app.use('/api/signup', signupRouter);
 
 // mount server
 const mountServer = async () => {
