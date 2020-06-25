@@ -6,6 +6,7 @@ require('dotenv').config();
 const connectMongo = require('./database');
 
 const signupRouter = require('./routes/signup');
+const activationRouter = require('./routes/activation');
 
 const app = express();
 
@@ -20,6 +21,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // routes
 app.use('/api/signup', signupRouter);
+app.use('/api/account-activation', activationRouter);
 
 // mount server
 const mountServer = async () => {
@@ -29,7 +31,7 @@ const mountServer = async () => {
     await connectMongo();
     console.log('connected to MongoDB Cluster');
   } catch (err) {
-    console.error(err);
+    console.error('MONGO CONNECT ERROR', err);
   }
 
   app.listen(port, () => {

@@ -22,7 +22,7 @@ exports.signup = (req, res) => {
       from: `${process.env.EMAIL_FROM}`,
       to: `${email}`,
       subject: `Account activation link`,
-      text: 'Sendgrid email',
+      text: 'Activate your account',
       html: `
                 <h1>Please use the following link to activate your account</h1>
                 <p>${process.env.PUBLIC_URL}/auth/activate/${token}</p>
@@ -40,5 +40,8 @@ exports.signup = (req, res) => {
       .catch((reason) => {
         console.log(reason);
       });
+
+    // for POSTMAN
+    res.json({ token });
   });
 };
