@@ -8,6 +8,7 @@ const connectMongo = require('./database');
 const signupRouter = require('./routes/signup');
 const signinRouter = require('./routes/signin');
 const activationRouter = require('./routes/activation');
+const userRouter = require('./routes/user');
 
 const app = express();
 
@@ -24,6 +25,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/signup', signupRouter);
 app.use('/api/signin', signinRouter);
 app.use('/api/account-activation', activationRouter);
+app.use('/api/user', userRouter);
 
 // mount server
 const mountServer = async () => {
