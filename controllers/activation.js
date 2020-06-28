@@ -5,7 +5,7 @@ exports.activation = (req, res) => {
   const { token } = req.body;
 
   if (token) {
-    jwt.verify(token, process.env.JWT_SECRET, function (err) {
+    jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION, function (err) {
       if (err) {
         console.log('JWT VERIFY IN ACCOUNT ACTIVATION ERROR', err);
         return res.status(401).json({

@@ -14,7 +14,7 @@ exports.signup = (req, res) => {
       });
     }
 
-    const token = jwt.sign({ name, email, password }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ name, email, password }, process.env.JWT_ACCOUNT_ACTIVATION, {
       expiresIn: '10m',
     });
 
