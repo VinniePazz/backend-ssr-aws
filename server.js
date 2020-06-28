@@ -6,7 +6,7 @@ require('dotenv').config();
 const connectMongo = require('./database');
 
 const signupRouter = require('./routes/signup');
-const signinRouter = require('./routes/sigin');
+const signinRouter = require('./routes/signin');
 const activationRouter = require('./routes/activation');
 
 const app = express();
