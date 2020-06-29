@@ -9,6 +9,7 @@ const signupRouter = require('./routes/signup');
 const signinRouter = require('./routes/signin');
 const activationRouter = require('./routes/activation');
 const forgotPassword = require('./routes/forgot-password');
+const resetPassword = require('./routes/reset-password');
 const userRouter = require('./routes/user');
 
 const app = express();
@@ -26,6 +27,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/signup', signupRouter);
 app.use('/api/signin', signinRouter);
 app.use('/api/forgot-password', forgotPassword);
+app.use('/api/reset-password', resetPassword);
 app.use('/api/account-activation', activationRouter);
 app.use('/api/user', userRouter);
 

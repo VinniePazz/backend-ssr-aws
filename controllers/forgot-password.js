@@ -31,18 +31,26 @@ exports.forgotPassword = (req, res) => {
           `,
     };
 
-    sgMail
-      .send(emailData)
-      .then((sent) => {
-        return res.json({
-          message: `Email has been sent to ${email}. Follow the instruction to activate your account`,
+    return user.updateOne({ resetPasswordLink: token }, (err, success) => {
+      if (err) {
+        console.log('RESET PASSWORD LINK ERROR', err);
+        return res.status(400).json({
+          error: 'Database connection error on user password forgot request',
         });
-      })
-      .catch((err) => {
-        // console.log('SIGNUP EMAIL SENT ERROR', err)
-        return res.json({
-          message: err.message,
-        });
-      });
+      } else {
+        sgMail
+          .send(emailData)
+          .then((sent) => {
+            return res.json({
+              message: `Email has been sent to ${email}. Follow the instruction to activate your account`,
+            });
+          })
+          .catch((err) => {
+            return res.json({
+              message: err.message,
+            });
+          });
+      }
+    });
   });
 };
