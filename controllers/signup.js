@@ -14,13 +14,17 @@ exports.signup = (req, res) => {
       });
     }
 
-    const token = jwt.sign({ name, email, password }, process.env.JWT_ACCOUNT_ACTIVATION, {
-      expiresIn: '10m',
-    });
+    const token = jwt.sign(
+      { name, email, password },
+      process.env.JWT_ACCOUNT_ACTIVATION,
+      {
+        expiresIn: '10m',
+      }
+    );
 
     const emailData = {
-      from: `${process.env.EMAIL_FROM}`,
-      to: `${email}`,
+      from: process.env.EMAIL_FROM,
+      to: email,
       subject: `Account activation link`,
       text: 'Activate your account',
       html: `
