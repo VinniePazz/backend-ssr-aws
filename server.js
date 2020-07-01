@@ -10,6 +10,7 @@ const signinRouter = require('./routes/signin');
 const activationRouter = require('./routes/activation');
 const forgotPassword = require('./routes/forgot-password');
 const resetPassword = require('./routes/reset-password');
+const googleLoginRouter = require('./routes/google-login');
 const userRouter = require('./routes/user');
 
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api/signin', signinRouter);
 app.use('/api/forgot-password', forgotPassword);
 app.use('/api/reset-password', resetPassword);
 app.use('/api/account-activation', activationRouter);
+app.use('/api/google-login', googleLoginRouter);
 app.use('/api/user', userRouter);
 
 // mount server
