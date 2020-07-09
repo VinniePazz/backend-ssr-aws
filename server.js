@@ -1,9 +1,9 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 require('dotenv').config();
-const connectMongo = require('./database');
+const connectToMongoDB = require('./database');
 
 const signupRouter = require('./routes/signup');
 const signinRouter = require('./routes/signin');
@@ -18,6 +18,8 @@ const app = express();
 // middlewares
 app.use(morgan('dev'));
 app.use(bodyParser.json());
+
+app.disable('x-powered-by');
 
 if (process.env.NODE_ENV === 'development') {
   // app.use(cors()); // allows all origins
@@ -34,18 +36,23 @@ app.use('/api/google-login', googleLoginRouter);
 app.use('/api/user', userRouter);
 
 // mount server
-const mountServer = async () => {
+const mountServer = () => {
   const port = process.env.PORT || 8000;
 
-  try {
-    await connectMongo();
-    console.log('connected to MongoDB Cluster');
+  const connectionSuccess = ({ connections }) => {
+    const { user, host } = connections[0];
+
+    console.log(`connected to ${host} by ${user}`);
     app.listen(port, () => {
       console.log(`app is running on port ${port}`);
     });
-  } catch (err) {
+  };
+
+  const connectionError = (err) => {
     console.error('MONGO CONNECT ERROR', err);
-  }
+  };
+
+  connectToMongoDB().then(connectionSuccess).catch(connectionError);
 };
 
 mountServer();
