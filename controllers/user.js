@@ -2,18 +2,29 @@ const User = require('../models/user');
 
 exports.read = (req, res) => {
   const userId = req.params.id;
-  User.findById(userId).exec((err, user) => {
-    if (err || !user) {
-      return res.status(400).json({
-        error: 'User not found',
-      });
-    }
-    console.log(user);
+  // User.findById(userId).exec((err, user) => {
+  //   if (err || !user) {
+  //     return res.status(400).json({
+  //       error: 'User not found',
+  //     });
+  //   }
+  //   console.log(user);
 
-    user.hashed_password = undefined; // delete field for response
-    user.salt = undefined;
-    res.json(user);
+  //   user.hashed_password = undefined;
+  //   user.salt = undefined;
+  //   res.json({ user });
+  // });
+
+  console.log(req.cookies);
+
+  res.cookie('cookieName', 'cookievalue', {
+    maxAge: 900000,
+    httpOnly: true,
+    path: '/',
+    secure: false,
+    signed: false,
   });
+  res.json({});
 };
 
 exports.update = (req, res) => {

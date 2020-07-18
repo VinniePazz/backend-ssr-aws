@@ -10,7 +10,7 @@ const signinRouter = require('./routes/signin');
 const activationRouter = require('./routes/activation');
 const forgotPassword = require('./routes/forgot-password');
 const resetPassword = require('./routes/reset-password');
-const googleLoginRouter = require('./routes/google-login');
+const googleLoginRouter = require('./routes/google');
 const userRouter = require('./routes/user');
 
 const app = express();
@@ -19,22 +19,37 @@ const app = express();
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 
-app.disable('x-powered-by');
-
 if (process.env.NODE_ENV === 'development') {
-  // app.use(cors()); // allows all origins
-  app.use(cors({ origin: `${process.env.PUBLIC_URL}` }));
+  // !!! Once in production, don't forget to modify req.headers.origin to the exact website you wish to allow to connect.
+  app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header(
+      'Access-Control-Allow-Methods',
+      'GET,PUT,POST,PATCH,DELETE,UPDATE,OPTIONS'
+    );
+    res.header(
+      'Access-Control-Allow-Headers',
+      'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept'
+    );
+    next();
+  });
 }
 
 // routes
 app.use('/api/signup', signupRouter);
 app.use('/api/signin', signinRouter);
+app.use('/api/google', googleLoginRouter);
 app.use('/api/forgot-password', forgotPassword);
 app.use('/api/reset-password', resetPassword);
 app.use('/api/account-activation', activationRouter);
-app.use('/api/google-login', googleLoginRouter);
-app.use('/api/user', userRouter);
+app.use('/api/users', userRouter);
 
+app.all('*', (req, res) => {
+  res.status(404).json({ status: 'fail' });
+});
+
+// app.use(globalErrorHandler);
 // mount server
 const mountServer = () => {
   const port = process.env.PORT || 8000;
