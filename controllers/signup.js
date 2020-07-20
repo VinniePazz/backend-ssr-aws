@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const User = require('../models/Customer');
 const jwt = require('jsonwebtoken');
 // sendgrid
 const sgMail = require('@sendgrid/mail');

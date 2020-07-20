@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const Customer = require('../models/Customer');
 
 exports.read = (req, res) => {
   const userId = req.params.id;
@@ -35,7 +35,7 @@ exports.update = (req, res) => {
     });
   }
   // we have _id from express-jwt middleware JWT payload
-  User.findOne({ _id: req.user._id }, (err, user) => {
+  Customer.findOne({ _id: req.user._id }, (err, user) => {
     if (err || !user) {
       return res.status(400).json({
         error: 'User not found',

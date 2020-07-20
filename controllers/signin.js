@@ -1,10 +1,10 @@
-const User = require('../models/user');
+const Customer = require('../models/Customer');
 const jwt = require('jsonwebtoken');
 
 exports.signin = (req, res) => {
   const { email, password } = req.body;
   // check if user exist
-  User.findOne({ email }).exec((err, user) => {
+  Customer.findOne({ email }).exec((err, user) => {
     if (err || !user) {
       return res.status(400).json({
         error: 'User with that email does not exist. Please signup',

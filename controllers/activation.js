@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const Customer = require('../models/Customer');
 const jwt = require('jsonwebtoken');
 
 exports.activation = (req, res) => {
@@ -15,7 +15,7 @@ exports.activation = (req, res) => {
 
       const { name, email, password } = jwt.decode(token);
 
-      const user = new User({ name, email, password });
+      const user = new Customer({ name, email, password });
 
       user.save((err, user) => {
         if (err) {

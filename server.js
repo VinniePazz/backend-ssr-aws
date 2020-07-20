@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const cors = require('cors');
+// const cors = require('cors');
 require('dotenv').config();
 const connectToMongoDB = require('./database');
 
@@ -11,7 +11,8 @@ const activationRouter = require('./routes/activation');
 const forgotPassword = require('./routes/forgot-password');
 const resetPassword = require('./routes/reset-password');
 const googleLoginRouter = require('./routes/google');
-const userRouter = require('./routes/user');
+const customersRouter = require('./routes/customer');
+const productsRouter = require('./routes/products');
 
 const app = express();
 
@@ -43,13 +44,15 @@ app.use('/api/google', googleLoginRouter);
 app.use('/api/forgot-password', forgotPassword);
 app.use('/api/reset-password', resetPassword);
 app.use('/api/account-activation', activationRouter);
-app.use('/api/users', userRouter);
+app.use('/api/customers', customersRouter);
+app.use('/api/products', productsRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({ status: 'fail' });
 });
 
 // app.use(globalErrorHandler);
+
 // mount server
 const mountServer = () => {
   const port = process.env.PORT || 8000;

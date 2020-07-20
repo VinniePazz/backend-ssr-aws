@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const User = require('../models/Customer');
 const jwt = require('jsonwebtoken');
 
 exports.resetPassword = (req, res) => {
