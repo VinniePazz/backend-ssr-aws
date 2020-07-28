@@ -35,3 +35,14 @@ exports.getProduct = async (req, res, next) => {
   const product = await Product.findById(id);
   res.json({ status: 'success', data: product });
 };
+
+exports.addProduct = async (req, res, next) => {
+  const newProduct = await Product.create(req.body);
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      category: newProduct,
+    },
+  });
+};

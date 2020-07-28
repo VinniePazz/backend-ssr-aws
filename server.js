@@ -13,6 +13,7 @@ const resetPassword = require('./routes/reset-password');
 const googleLoginRouter = require('./routes/google');
 const customersRouter = require('./routes/customer');
 const productsRouter = require('./routes/products');
+const categoriesRouter = require('./routes/categories');
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use('/api/reset-password', resetPassword);
 app.use('/api/account-activation', activationRouter);
 app.use('/api/customers', customersRouter);
 app.use('/api/products', productsRouter);
+app.use('/api/categories', categoriesRouter);
 
 app.all('*', (req, res) => {
   res.status(404).json({ status: 'fail' });

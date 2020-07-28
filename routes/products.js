@@ -3,6 +3,7 @@ const router = express.Router();
 
 // import controller
 const {
+  addProduct,
   getProduct,
   getAllProducts,
   getProductsByFilter,
@@ -11,5 +12,6 @@ const {
 router.get('/', getAllProducts);
 router.get('/', getProductsByFilter);
 router.get('/:id', getProduct);
+router.post('/', addProduct);
 
 module.exports = router;
