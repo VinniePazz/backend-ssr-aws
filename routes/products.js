@@ -11,7 +11,7 @@ const {
 
 router.get('/', getAllProducts);
 router.get('/', getProductsByFilter);
-router.get('/:id', getProduct);
+router.get('/filter/:productFilter', getProduct);
 router.post('/', addProduct);
 
 module.exports = router;

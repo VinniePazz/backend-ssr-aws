@@ -16,3 +16,14 @@ exports.addCategory = async (req, res, next) => {
     },
   });
 };
+
+exports.getAllCategories = async (req, res, next) => {
+  const categories = await Category.find({});
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      categories: categories,
+    },
+  });
+};
