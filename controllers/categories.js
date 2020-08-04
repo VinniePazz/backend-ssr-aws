@@ -17,10 +17,21 @@ exports.addCategory = async (req, res, next) => {
   });
 };
 
+exports.getCategory = async (req, res, next) => {
+  const category = await Category.findById(req.params.id).populate('children');
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      category,
+    },
+  });
+};
+
 exports.getAllCategories = async (req, res, next) => {
   const categories = await Category.find({});
 
-  res.status(201).json({
+  res.status(200).json({
     status: 'success',
     data: {
       categories: categories,
