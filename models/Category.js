@@ -1,13 +1,35 @@
 const mongoose = require('mongoose');
 
+var filterSchema = new mongoose.Schema({ name: 'string' });
+
 const categorySchema = new mongoose.Schema(
   {
-    name: {
+    type: {
       type: String,
-      trim: true,
-      unique: true,
       required: true,
+      enum: ['parent', 'child'],
+    },
+    slug: {
+      type: String,
+      immutable: true,
+      required: true,
+      trim: true,
       lowercase: true,
+      unique: true,
+    },
+    name: {
+      en: {
+        type: String,
+        trim: true,
+        unique: true,
+        required: true,
+      },
+      ua: {
+        type: String,
+        trim: true,
+        unique: true,
+        required: true,
+      },
     },
     parent: {
       type: mongoose.SchemaTypes.ObjectId,
@@ -19,7 +41,7 @@ const categorySchema = new mongoose.Schema(
         ref: 'Category',
       },
     ],
-    filters: [String],
+    filters: {},
   },
   { timestamps: true }
 );

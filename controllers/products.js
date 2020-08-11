@@ -78,9 +78,12 @@ exports.getProductsByFilter = async (req, res, next) => {
 };
 
 exports.getProduct = async (req, res, next) => {
-  const productFilter = req.params.productFilter;
-  console.log(productFilter);
-  res.json({ status: 'success' });
+  // 1. Fetch category from query param
+  const category = await Category.findOne({ name: req.query.category });
+  // 2. Check if it's top catagory
+  const products = await Product.find({ category: req.query.category });
+
+  res.json({ status: 'success', data: { category, products } });
 };
 
 exports.addProduct = async (req, res, next) => {

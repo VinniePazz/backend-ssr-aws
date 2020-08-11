@@ -11,7 +11,11 @@ const {
 
 router.get('/', getAllProducts);
 router.get('/', getProductsByFilter);
-router.get('/filter/:productFilter', getProduct);
+router.get('/filter/', getProduct);
+
+// @route   POST /products
+// @desc    Create new product and update filters in categories if needed
+// @access  Private
 router.post('/', addProduct);
 
 module.exports = router;

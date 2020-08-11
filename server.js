@@ -75,4 +75,13 @@ const mountServer = () => {
   connectToMongoDB().then(connectionSuccess).catch(connectionError);
 };
 
+const mountServerWithoutDB = () => {
+  const port = process.env.PORT || 8000;
+
+  app.listen(port, () => {
+    console.log(`app is running on port ${port} without db`);
+  });
+};
+
 mountServer();
+// mountServerWithoutDB();
