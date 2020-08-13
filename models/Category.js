@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 
-var filterSchema = new mongoose.Schema({ name: 'string' });
-
 const categorySchema = new mongoose.Schema(
   {
     type: {
