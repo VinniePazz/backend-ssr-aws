@@ -1,56 +1,14 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+const {
+  transformcategoryFilter,
+  updatePriceFilter,
+} = require('../utils/productsHelpers');
 
-exports.getAllProducts = (req, res, next) => {
-  if (req.body) {
-    next();
-    return;
-  }
-  Product.find({})
-    .then((products) => {
-      console.log(products);
-      res.json({ status: 'success', data: products });
-    })
-    .catch((err) => {
-      res.status(404).json({ success: false, error: err });
-    });
-};
-
-exports.getProductsByFilter = async (req, res, next) => {
-  if (!req.body) {
-    return;
-  }
-
+exports.getProducts = async (req, res, next) => {
   const category = await Category.findOne({ name: req.body.category });
 
   const products = await Product.find({ category: category._id });
-
-  // {
-  //   $group: {
-  //     _id: null,
-  //     minPrice: { $min: '$price' },
-  //     maxPrice: { $max: '$price' },
-  //     manufacturer: { $push: '$details.manufacturer' },
-  //     cableType: { $push: '$details.cableType' },
-  //     cableLength: { $push: '$details.cableLength' },
-  //     somethingElse: { $push: '$details.somethingElse' },
-  //     filters: { $objectToArray: 'details' },
-  //   },
-  // },
-
-  // const aggregation = await Product.aggregate([
-  //   { $match: { category: category._id } },
-  //   {
-  //     $group: {
-  //       _id: null,
-  //       minPrice: { $min: '$price' },
-  //       maxPrice: { $max: '$price' },
-  //     },
-  //   },
-  // ]);
-
-  console.log('CATEGORY: ', category);
-  console.log('PRODUCTS: ', products);
 
   const filterMap = {};
 
@@ -87,12 +45,39 @@ exports.getProduct = async (req, res, next) => {
 };
 
 exports.addProduct = async (req, res, next) => {
+  // 1. Fetch child category
+  const category = await Category.findById(req.body.categoryId);
+
+  // 2. Grab details from new product and filters from corresponding category
+  const details = req.body.details;
+  let categoryFilters = category.filters || {};
+
+  // 3. Check and update price filter
+  const newPriceFilter = updatePriceFilter(req.body.price, categoryFilters);
+  if (newPriceFilter !== null) {
+    categoryFilters.price = newPriceFilter;
+  }
+
+  // 4. Update other filters in category
+  categoryFilters = transformcategoryFilter(details, categoryFilters);
+
+  // 5. Save new product
   const newProduct = await Product.create(req.body);
+
+  // 6. Save new category's filters
+  const newCategory = await Category.findByIdAndUpdate(
+    req.body.categoryId,
+    {
+      filters: categoryFilters,
+    },
+    { new: true, upsert: true }
+  );
 
   res.status(201).json({
     status: 'success',
     data: {
-      category: newProduct,
+      category: newCategory,
+      product: newProduct,
     },
   });
 };

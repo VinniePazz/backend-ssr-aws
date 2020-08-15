@@ -3,16 +3,7 @@ const Category = require('../models/Category');
 exports.addCategory = async (req, res, next) => {
   const { name, type, parentId } = req.body;
 
-  // Slug - url piece describing some entity (iphone-11-pro-max)
-  // We construct slug from "en" variant of the category name with previous sanitization
-  // TODO: create another approach of slug generator???
-  const slug = name.en
-    .trim()
-    .toLowerCase()
-    .replace(/(\s+|\/|\\|\+|%|&|\?)/gim, '-');
-
   const category = {
-    slug,
     type,
     name,
     parent: parentId,
@@ -52,7 +43,6 @@ exports.editFilterInCategory = async (req, res, next) => {
     req.body.categoryId,
     {
       [`filters.${req.body.filter.key}`]: req.body.filter.payload,
-      'filters.else': 'something else',
     },
     { new: true, upsert: true }
   );

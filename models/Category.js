@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { slugify } = require('../utils/commonHelpers');
 
 const categorySchema = new mongoose.Schema(
   {
@@ -10,7 +11,6 @@ const categorySchema = new mongoose.Schema(
     slug: {
       type: String,
       immutable: true,
-      required: true,
       trim: true,
       lowercase: true,
       unique: true,
@@ -41,7 +41,12 @@ const categorySchema = new mongoose.Schema(
     ],
     filters: {},
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+categorySchema.pre('save', function (next) {
+  this.slug = slugify(this.name.en);
+  next();
+});
 
 module.exports = mongoose.model('Category', categorySchema);

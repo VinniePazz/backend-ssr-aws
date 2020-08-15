@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
@@ -48,6 +49,9 @@ app.use('/api/account-activation', activationRouter);
 app.use('/api/customers', customersRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/categories', categoriesRouter);
+
+// Serving static images
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.all('*', (req, res) => {
   res.status(404).json({ status: 'fail' });

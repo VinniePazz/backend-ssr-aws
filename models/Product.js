@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { slugify } = require('../utils/commonHelpers');
 
 const productsSchema = new mongoose.Schema(
   {
@@ -20,13 +21,10 @@ const productsSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      unique: true,
       lowercase: true,
-      immutable: true,
     },
     slug: {
       type: String,
-      required: true,
       unique: true,
       immutable: true,
     },
@@ -34,7 +32,6 @@ const productsSchema = new mongoose.Schema(
       preview: {
         type: String,
         trim: true,
-        required: true,
       },
       catalog: [{ type: String, trim: true }],
     },
@@ -69,7 +66,7 @@ const productsSchema = new mongoose.Schema(
         ref: 'Category',
       },
     },
-    isNew: {
+    isUsed: {
       type: Boolean,
       required: true,
     },
@@ -79,9 +76,15 @@ const productsSchema = new mongoose.Schema(
       max: 100,
       required: true,
     },
+    selled: Number,
     details: {},
   },
   { timestamps: true }
 );
+
+productsSchema.pre('save', function (next) {
+  this.slug = slugify(this.name.en);
+  next();
+});
 
 module.exports = mongoose.model('Product', productsSchema);
