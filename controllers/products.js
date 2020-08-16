@@ -35,7 +35,7 @@ exports.getProducts = async (req, res, next) => {
 
 exports.addProduct = async (req, res, next) => {
   // 1. Fetch child category
-  const category = await Category.findById(req.body.categoryId);
+  const category = await Category.findById(req.body.categoryId).lean();
 
   // 2. Grab details from new product and filters from corresponding category
   const details = req.body.details;
@@ -54,7 +54,7 @@ exports.addProduct = async (req, res, next) => {
   const newProduct = await Product.create(req.body);
 
   // 6. Save new category's filters
-  const newCategory = await Category.findByIdAndUpdate(
+  const updatedCategory = await Category.findByIdAndUpdate(
     req.body.categoryId,
     {
       filters: categoryFilters,
@@ -65,7 +65,7 @@ exports.addProduct = async (req, res, next) => {
   res.status(201).json({
     status: 'success',
     data: {
-      category: newCategory,
+      category: updatedCategory,
       product: newProduct,
     },
   });

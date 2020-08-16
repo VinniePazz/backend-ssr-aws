@@ -132,7 +132,7 @@ function updateColorFilter(detail, filter) {
       filter.values.push({
         en: detail.en,
         ua: detail.ua,
-        hex: detail.hex,
+        hex: detail.value,
         slug: detail.slug,
       });
     }
