@@ -2,6 +2,7 @@ const Product = require('../models/Product');
 const Category = require('../models/Category');
 const {
   formatQuery,
+  formatSort,
   transformcategoryFilter,
   updatePriceFilter,
 } = require('../utils/productsHelpers');
@@ -13,29 +14,16 @@ exports.getProduct = async (req, res, next) => {
 };
 
 exports.getProducts = async (req, res, next) => {
-  console.log(req.query);
-  const category = await Category.findOne({ slug: req.query.category });
-  const query = formatQuery(req.query, category.filters);
-  console.log('QUERY: ', query);
-  const products = await Product.find(query);
-  // const products = await Product.find({ category: category._id });
+  const query = formatQuery(req.query);
+  console.log(query);
+  const limit = req.query.limit || 18;
+  const skip = req.query.page ? (req.query.page - 1) * limit : 0;
+  const sort = formatSort(req.query.sort);
 
-  // const filterMap = {};
-
-  // category.filters.forEach((item, i) => {
-  //   const filters = [];
-  //   products.forEach((product) => {
-  //     const filter = product.details[item];
-  //     if (!filters.includes(filter) && filter) {
-  //       filters.push(filter);
-  //     }
-  //   });
-  //   filterMap[item] = filters;
-  // });
-
-  // console.log(filterMap);
-
-  // // products.forEach((item) => {});
+  const [category, products] = await Promise.all([
+    Category.findOne({ slug: req.query.category }).lean(),
+    Product.find(query).sort(sort).lean(),
+  ]);
 
   res.status(200).json({
     status: 'success',

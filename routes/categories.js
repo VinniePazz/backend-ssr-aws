@@ -6,12 +6,10 @@ const {
   addCategory,
   getCategory,
   getAllCategories,
-  addFilterToCategory,
 } = require('../controllers/categories');
 
 router.get('/', getAllCategories);
 router.get('/:id', getCategory);
 router.post('/', addCategory);
-router.put('/filter', addFilterToCategory);
 
 module.exports = router;

@@ -1,18 +1,19 @@
 const { slugify, removeAnyNonDigitValue } = require('./commonHelpers');
 
-function formatQuery(query, filters) {
-  const reservedParams = {
+function formatQuery(query) {
+  const excludedParams = {
     lang: 1,
     page: 1,
     limit: 1,
     price: 1,
     category: 1,
+    sort: 1,
   };
 
   const dbQuery = {};
 
   for (const [key, param] of Object.entries(query)) {
-    if (!reservedParams[key]) {
+    if (!excludedParams[key]) {
       const values = param.split(',');
       const queryExpression = { $in: values };
       dbQuery[`details.${key}.slug`] = queryExpression;
@@ -29,6 +30,23 @@ function formatQuery(query, filters) {
   }
 
   return dbQuery;
+}
+
+function formatSort(sort) {
+  console.log(sort);
+  if (sort) {
+    if (sort === 'asc' || sort === 'desc') {
+      return { 'price.ua': sort, priority: 'desc' };
+    } else if (sort === 'new') {
+      return { createdAt: 'desc', priority: 'desc' };
+    } else if (sort === 'popular') {
+      return { priority: 'desc', selled: 'desc' };
+    } else {
+      return { priority: 'desc' };
+    }
+  } else {
+    return { priority: 'desc' };
+  }
 }
 
 function transformcategoryFilter(details, filters) {
@@ -195,6 +213,7 @@ function isExistInArray(array, param) {
 
 module.exports = {
   formatQuery,
+  formatSort,
   transformcategoryFilter,
   updatePriceFilter,
 };
