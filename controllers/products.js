@@ -15,19 +15,21 @@ exports.getProduct = async (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
   const query = formatQuery(req.query);
-  console.log(query);
-  const limit = req.query.limit || 18;
+  const limit = Number(req.query.limit) || 18;
   const skip = req.query.page ? (req.query.page - 1) * limit : 0;
   const sort = formatSort(req.query.sort);
 
   const [category, products] = await Promise.all([
-    Category.findOne({ slug: req.query.category }).lean(),
-    Product.find(query).sort(sort).lean(),
+    Category.findOne({ slug: req.query.category }).lean().exec(),
+    Product.find(query).sort(sort).skip(skip).limit(limit).lean().exec(),
   ]);
 
   res.status(200).json({
     status: 'success',
-    products,
+    data: {
+      products,
+      category,
+    },
   });
 };
 

@@ -36,13 +36,20 @@ exports.getCategory = async (req, res, next) => {
   });
 };
 
-exports.getAllCategories = async (req, res, next) => {
-  const categories = await Category.find({});
+exports.getCategoriesTree = async (req, res, next) => {
+  const categories = await Category.find({ type: 'parent' })
+    .select('slug type name children')
+    .populate({
+      path: 'children',
+      select: 'name slug type -_id',
+      options: { sort: { createdAt: -1 } },
+    })
+    .lean();
 
   res.status(200).json({
     status: 'success',
     data: {
-      categories: categories,
+      categories,
     },
   });
 };
