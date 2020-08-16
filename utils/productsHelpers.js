@@ -1,5 +1,36 @@
 const { slugify, removeAnyNonDigitValue } = require('./commonHelpers');
 
+function formatQuery(query, filters) {
+  const reservedParams = {
+    lang: 1,
+    page: 1,
+    limit: 1,
+    price: 1,
+    category: 1,
+  };
+
+  const dbQuery = {};
+
+  for (const [key, param] of Object.entries(query)) {
+    if (!reservedParams[key]) {
+      const values = param.split(',');
+      const queryExpression = { $in: values };
+      dbQuery[`details.${key}.slug`] = queryExpression;
+    }
+
+    if (key === 'price') {
+      // 'price.ua': { $gte: 20000, $lte: 21000 }
+      const price = param.split('-');
+      dbQuery[`${key}.${query.lang || 'ua'}`] = {
+        $gte: price[0],
+        $lte: price[1],
+      };
+    }
+  }
+
+  return dbQuery;
+}
+
 function transformcategoryFilter(details, filters) {
   // Select product details with isFilter flag
   const detailsWithFilterFlag = [];
@@ -69,19 +100,23 @@ function updateColorFilter(detail, filter) {
         en: detail.label.en,
         ua: detail.label.ua,
       },
-      values: {
-        en: [detail.en],
-        ua: [detail.ua],
-        hex: [detail.value],
-        slugs: [slugify(detail.en)],
-      },
+      values: [
+        {
+          en: detail.en,
+          ua: detail.ua,
+          hex: detail.value,
+          slug: detail.slug,
+        },
+      ],
     };
   } else {
-    if (!filter.values.en.includes(detail.en)) {
-      filter.values.en.push(detail.en);
-      filter.values.ua.push(detail.ua);
-      filter.values.hex.push(detail.value);
-      filter.values.slugs.push(slugify(detail.en));
+    if (!isExistInArray(filter.values, detail.en)) {
+      filter.values.push({
+        en: detail.en,
+        ua: detail.ua,
+        hex: detail.hex,
+        slug: detail.slug,
+      });
     }
   }
   return filter;
@@ -100,13 +135,19 @@ function updateMeasurementFilter(detail, filter) {
         en: detail.units.en,
         ua: detail.units.ua,
       },
-      values: [detail.value],
+      values: [{ en: detail.value, ua: detail.value, slug: detail.slug }],
     };
   } else {
-    if (!filter.values.includes(detail.value)) {
-      filter.values.push(detail.value);
-      filter.values.sort((a, b) => {
-        return removeAnyNonDigitValue(a) - removeAnyNonDigitValue(b);
+    if (!isExistInArray(filter.values, detail.value)) {
+      filter.values.push({
+        en: detail.value,
+        ua: detail.value,
+        slug: detail.slug,
+      });
+      filter.values.sort((obj1, obj2) => {
+        return (
+          removeAnyNonDigitValue(obj1.en) - removeAnyNonDigitValue(obj2.en)
+        );
       });
     }
   }
@@ -122,21 +163,38 @@ function updateStringFilter(detail, filter) {
         en: detail.label.en,
         ua: detail.label.ua,
       },
-      values: [detail.value],
-      slugs: [slugify(detail.value)],
+      values: [
+        {
+          en: detail.en,
+          ua: detail.ua,
+          slug: detail.slug,
+        },
+      ],
     };
   } else {
-    if (!filter.values.includes(detail.value)) {
-      filter.values.push(detail.value);
-      filter.values.sort((a, b) => {
-        return removeAnyNonDigitValue(a) - removeAnyNonDigitValue(b);
+    if (!isExistInArray(filter.values, detail.en)) {
+      filter.values.push({
+        en: detail.en,
+        ua: detail.ua,
+        slug: detail.slug,
       });
     }
   }
   return filter;
 }
 
+function isExistInArray(array, param) {
+  let isExist = false;
+  array.forEach((object) => {
+    if (object.en === param) {
+      isExist = true;
+    }
+  });
+  return isExist;
+}
+
 module.exports = {
+  formatQuery,
   transformcategoryFilter,
   updatePriceFilter,
 };

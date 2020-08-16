@@ -38,20 +38,6 @@ exports.addFilterToCategory = async (req, res, next) => {
   });
 };
 
-exports.editFilterInCategory = async (req, res, next) => {
-  const category = await Category.findByIdAndUpdate(
-    req.body.categoryId,
-    {
-      [`filters.${req.body.filter.key}`]: req.body.filter.payload,
-    },
-    { new: true, upsert: true }
-  );
-
-  res.status(200).json({
-    status: 'success',
-  });
-};
-
 exports.getCategory = async (req, res, next) => {
   const category = await Category.findById(req.params.id).populate('children');
 

@@ -1,47 +1,46 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const {
+  formatQuery,
   transformcategoryFilter,
   updatePriceFilter,
 } = require('../utils/productsHelpers');
 
+exports.getProduct = async (req, res, next) => {
+  const product = await Product.find({ slug: req.params.slug });
+
+  res.json({ status: 'success', data: { product } });
+};
+
 exports.getProducts = async (req, res, next) => {
-  const category = await Category.findOne({ name: req.body.category });
+  console.log(req.query);
+  const category = await Category.findOne({ slug: req.query.category });
+  const query = formatQuery(req.query, category.filters);
+  console.log('QUERY: ', query);
+  const products = await Product.find(query);
+  // const products = await Product.find({ category: category._id });
 
-  const products = await Product.find({ category: category._id });
+  // const filterMap = {};
 
-  const filterMap = {};
+  // category.filters.forEach((item, i) => {
+  //   const filters = [];
+  //   products.forEach((product) => {
+  //     const filter = product.details[item];
+  //     if (!filters.includes(filter) && filter) {
+  //       filters.push(filter);
+  //     }
+  //   });
+  //   filterMap[item] = filters;
+  // });
 
-  category.filters.forEach((item, i) => {
-    const filters = [];
-    products.forEach((product) => {
-      const filter = product.details[item];
-      if (!filters.includes(filter) && filter) {
-        filters.push(filter);
-      }
-    });
-    filterMap[item] = filters;
-  });
+  // console.log(filterMap);
 
-  console.log(filterMap);
-
-  // products.forEach((item) => {});
+  // // products.forEach((item) => {});
 
   res.status(200).json({
     status: 'success',
-    data: {
-      products,
-    },
+    products,
   });
-};
-
-exports.getProduct = async (req, res, next) => {
-  // 1. Fetch category from query param
-  const category = await Category.findOne({ name: req.query.category });
-  // 2. Check if it's top catagory
-  const products = await Product.find({ category: req.query.category });
-
-  res.json({ status: 'success', data: { category, products } });
 };
 
 exports.addProduct = async (req, res, next) => {

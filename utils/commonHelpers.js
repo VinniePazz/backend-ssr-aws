@@ -2,7 +2,7 @@ exports.slugify = (value) => {
   let slug = value
     .trim()
     .toLowerCase()
-    .replace(/[\s*+~.()'"!:@%&?]/gim, '-');
+    .replace(/[\s*+~.()'"!/:@%&?]/gim, '-');
 
   if (slug[slug.length - 1] === '-') {
     return slug.slice(0, -1);

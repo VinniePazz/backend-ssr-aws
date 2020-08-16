@@ -5,13 +5,11 @@ const router = express.Router();
 const {
   addProduct,
   getProduct,
-  getAllProducts,
-  getProductsByFilter,
+  getProducts,
 } = require('../controllers/products');
 
-router.get('/', getAllProducts);
-router.get('/', getProductsByFilter);
-router.get('/filter/', getProduct);
+router.get('/:slug', getProduct);
+router.get('/', getProducts);
 
 // @route   POST /products
 // @desc    Create new product and update filters in categories if needed
