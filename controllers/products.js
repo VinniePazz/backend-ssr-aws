@@ -19,17 +19,27 @@ exports.getProducts = async (req, res, next) => {
   const skip = req.query.page ? (req.query.page - 1) * limit : 0;
   const sort = formatSort(req.query.sort);
 
+  const categoryQuery = Category.findOne({ slug: req.query.category })
+    .select('-_id type name slug filters')
+    .lean();
+
+  const productsQuery = Product.find(query)
+    .sort(sort)
+    .skip(skip)
+    .limit(limit)
+    .select(
+      '-_id images discount isAvailable name price model isUsed details slug'
+    )
+    .lean();
+
   const [category, products] = await Promise.all([
-    Category.findOne({ slug: req.query.category }).lean().exec(),
-    Product.find(query).sort(sort).skip(skip).limit(limit).lean().exec(),
+    categoryQuery.exec(),
+    productsQuery.exec(),
   ]);
 
   res.status(200).json({
-    status: 'success',
-    data: {
-      products,
-      category,
-    },
+    products,
+    category,
   });
 };
 
